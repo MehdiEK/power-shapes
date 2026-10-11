@@ -1,17 +1,21 @@
+import pandas as pd
 import matplotlib.pyplot as plt
 
 
-def plot_persistence_diagram(diagram, net_load):
+def plot_series(day_ts:pd.DataFrame, title:str):
     """
-    Plots the persistence diagram for H0.
+    Plots net load, solar and wind production for a given day.
     """
-    plt.figure(figsize=(6, 6))
-    plt.scatter(diagram[:, 0], diagram[:, 1])
-    vmin, vmax = min(net_load), max(net_load)
-    plt.plot([vmin, vmax], [vmin, vmax], "k--", alpha=0.5)
-    plt.xlabel("Naissance")
-    plt.ylabel("Mort")
-    plt.title("Diagramme de persistance H0 — creux du net load")
+    plt.figure(figsize=(10, 6))
+
+    for col in day_ts.columns:
+        if col != "datetime":
+            plt.plot(day_ts["datetime"], day_ts[col], label=col)
+    
+    plt.xlabel('Time')
+    plt.ylabel('Power')
+    plt.title(title)
+    plt.legend()
     plt.grid(alpha=0.3)
     plt.tight_layout()
     plt.show()

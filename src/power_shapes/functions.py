@@ -2,7 +2,17 @@ import numpy as np
 import gudhi as gd
 
 
-def persistence_diagram(net_load, filtration="sublevel"):
+def persistence_diagram(
+        net_load: np.ndarray, 
+        filtration="sublevel"
+) -> np.array:
+    """
+    """
+    assert (
+            filtration in ["sublevel", "suplevel"], 
+            "filtration must be either 'sublevel' or 'suplevel'."
+        )
+    
     x = np.asarray(net_load, dtype=float)
 
     if x.ndim != 1 or len(x) < 2 or not np.isfinite(x).all():
@@ -26,12 +36,5 @@ def persistence_diagram(net_load, filtration="sublevel"):
 
     # Extraire les intervalles H0
     intervals = st.persistence_intervals_in_dimension(0)
-
-    # Retirer la classe essentielle (mort infinie)
-    intervals = intervals[np.isfinite(intervals[:, 1])]
-
-    # Revenir aux valeurs originales pour les pointes
-    if filtration == "superlevel":
-        intervals = -intervals[:, ::-1]
 
     return intervals

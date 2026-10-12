@@ -55,9 +55,3 @@ def load_rte_data(
 
     return df
 
-
-if __name__ == '__main__':
-    df = load_rte_data('tests/fixtures/samples.csv')
-    print(df)
-
-

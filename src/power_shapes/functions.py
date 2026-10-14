@@ -39,7 +39,8 @@ def persistence_diagram(
     intervals = st.persistence_intervals_in_dimension(0)
 
     # Replace infinite death times with the maximum value of f
-    max_value = np.max(f)
-    intervals[intervals[:, 1] == np.inf, 1] = max_value
+    if clip:
+        max_value = np.max(f)
+        intervals[intervals[:, 1] == np.inf, 1] = max_value
 
     return intervals

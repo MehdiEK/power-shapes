@@ -1,10 +1,13 @@
 import numpy as np
 import gudhi as gd
+from itertools import combinations
+from joblib import Parallel, delayed
+from gudhi.hera import wasserstein_distance as _wd_hera 
 
 
 def persistence_diagram(
         net_load: np.ndarray, 
-        filtration="sublevel", 
+        filtration:str="sublevel", 
         clip:bool=False
 ) -> np.array:
     """
@@ -44,3 +47,51 @@ def persistence_diagram(
         intervals[intervals[:, 1] == np.inf, 1] = max_value
 
     return intervals
+
+
+def _pair_distance(d1, d2, order, internal_p, delta):
+    """
+    Compute the Wasserstein distance between two persistence diagrams.
+    """
+    return _wd_hera(d1, d2, order=order, internal_p=internal_p, delta=delta)
+
+
+def _chunk(pairs, diagrams, order, internal_p, delta):
+    return [
+        _pair_distance(
+            diagrams[i], diagrams[j], order, internal_p, delta
+        )
+        for i, j in pairs
+    ]
+
+
+def wasserstein_distance_matrix(
+        diagrams, 
+        order=1, 
+        internal_p=2, 
+        delta=0.01, 
+        n_jobs=1, 
+        chunk_size=2000
+    ):
+    """
+    Symmetric matrix of pairwise Wasserstein distances between persistence 
+    diagrams.
+
+    diagrams : list of (n_i, 2) arrays (finite points only, see to_h0_array)
+    order    : Wasserstein order p (1 or 2 are the usual choices)
+    internal_p : ground metric between pts (2 = Euclidean, np.inf = sup norm)
+    """
+    n = len(diagrams)
+    pairs = list(combinations(range(n), 2))  # only the upper triangle
+    chunks = [pairs[k:k + chunk_size] for k in range(0, len(pairs), chunk_size)]
+
+    results = Parallel(n_jobs=n_jobs)(
+        delayed(_chunk)(c, diagrams, order, internal_p, delta) for c in chunks
+    )
+
+    D = np.zeros((n, n))
+    flat = np.concatenate(results) if results else np.array([])
+    iu = np.triu_indices(n, k=1)
+    D[iu] = flat
+    D = D + D.T  # symmetrize
+    return D

@@ -4,7 +4,8 @@ import gudhi as gd
 
 def persistence_diagram(
         net_load: np.ndarray, 
-        filtration="sublevel"
+        filtration="sublevel", 
+        clip:bool=False
 ) -> np.array:
     """
     """
@@ -36,5 +37,9 @@ def persistence_diagram(
 
     # Extraire les intervalles H0
     intervals = st.persistence_intervals_in_dimension(0)
+
+    # Replace infinite death times with the maximum value of f
+    max_value = np.max(f)
+    intervals[intervals[:, 1] == np.inf, 1] = max_value
 
     return intervals

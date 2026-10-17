@@ -1,8 +1,13 @@
 import numpy as np
+import pandas as pd
 import gudhi as gd
+
 from itertools import combinations
 from joblib import Parallel, delayed
 from gudhi.hera import wasserstein_distance as _wd_hera 
+
+from power_shapes.loader import load_rte_data
+from power_shapes.utils import scale_columns_by_daily_mean
 
 
 def persistence_diagram(
@@ -95,3 +100,58 @@ def wasserstein_distance_matrix(
     D[iu] = flat
     D = D + D.T  # symmetrize
     return D
+
+
+def run_compute_wasserstein_distance( 
+        date_min:str="2022-01-01",
+        date_max:str="2022-12-31",
+        order=1, 
+        internal_p=2, 
+        delta=0.01, 
+        n_jobs=-1
+) -> np.array:
+    """
+    Compute the Wasserstein distance between all pairs of persistence diagrams.
+    """
+    # load data
+    df = load_rte_data()
+
+    # filter data by date
+    df = df[
+        (df['datetime'].dt.date >= pd.to_datetime(date_min).date()) 
+        & (df['datetime'].dt.date <= pd.to_datetime(date_max).date())
+    ]
+
+    # scale data
+    scaled_df = scale_columns_by_daily_mean(
+        df,
+        columns_by_mean={
+            "consumption_mw": ["solar_mw", "wind_mw", "net_demand_solar_mw", "net_demand_mw"]
+        }
+    )
+
+    # compute all the diagrams
+    diagrams = {}
+
+    for date, day_ts in scaled_df.groupby(scaled_df['datetime'].dt.date):
+        net_load = day_ts['net_demand_solar_mw'].values
+        diagram = persistence_diagram(net_load, filtration="sublevel", clip=True)
+        diagrams[date] = diagram
+
+    # compute the distance matrix
+    distance_matrix = wasserstein_distance_matrix(
+        diagrams=list(diagrams.values()),
+        order=order,
+        internal_p=internal_p,
+        delta=delta,
+        n_jobs=n_jobs
+    )
+
+    # save the results in a dataframe
+    idx = pd.DatetimeIndex(list(diagrams.keys()), name="date")
+
+    return pd.DataFrame(
+        distance_matrix,
+        index=idx,
+        columns=idx
+    )

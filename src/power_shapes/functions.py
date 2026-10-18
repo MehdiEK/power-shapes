@@ -12,7 +12,7 @@ from power_shapes.utils import scale_columns_by_daily_mean
 
 def persistence_diagram(
         net_load: np.ndarray, 
-        filtration:str="sublevel", 
+        filtration:str, 
         clip:bool=False
 ) -> np.array:
     """
@@ -103,12 +103,12 @@ def wasserstein_distance_matrix(
 
 
 def run_compute_wasserstein_distance( 
-        date_min:str="2022-01-01",
-        date_max:str="2022-12-31",
-        order=1, 
-        internal_p=2, 
-        delta=0.01, 
-        n_jobs=-1
+        date_min:str,
+        date_max:str,
+        order:int, 
+        internal_p:int, 
+        delta:float, 
+        n_jobs:int
 ) -> np.array:
     """
     Compute the Wasserstein distance between all pairs of persistence diagrams.

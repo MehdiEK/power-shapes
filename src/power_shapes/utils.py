@@ -59,17 +59,3 @@ def scale_columns_by_daily_mean(
             result[value_column] = df[value_column].div(daily_means).array
 
     return result
-
-
-if __name__ == "__main__":
-
-    from power_shapes.loader import load_rte_data
-
-    df = load_rte_data()
-    print(scale_columns_by_daily_mean(
-        df[
-            (df.datetime.dt.date >= pd.to_datetime("2026-05-01").date())
-            & (df.datetime.dt.date < pd.to_datetime("2026-05-08").date())
-        ], 
-        {"consumption_mw": ["net_demand_solar_mw"]}
-    ))

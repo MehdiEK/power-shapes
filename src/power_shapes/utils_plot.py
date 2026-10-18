@@ -59,13 +59,3 @@ def plot_distance_heatmap(
     ax.set_title(title)
     fig.colorbar(mesh, ax=ax, label="distance")
     return fig, ax
-
-
-if __name__ == "__main__":
-
-    # example
-    dist_df = pd.read_csv(
-        "data/wasserstein_distance_matrix.csv", index_col=0, parse_dates=True
-    )
-    plot_distance_heatmap(dist_df, vmax_quantile=0.99, cmap="viridis")
-    plt.show()

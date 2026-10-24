@@ -9,6 +9,7 @@ def build_parser() -> argparse.ArgumentParser:
     )
     parser.add_argument("--date-min", default="2026-01-01", help="First date to include.")
     parser.add_argument("--date-max", default="2026-06-01", help="Last date to include.")
+    parser.add_argument("--filtration", required=True, help="Filtration type.")
     parser.add_argument("--order", type=int, default=1, help="Wasserstein distance order.")
     parser.add_argument(
         "--internal-p",
@@ -30,7 +31,7 @@ def build_parser() -> argparse.ArgumentParser:
     )
     parser.add_argument(
         "--output",
-        default="data/wasserstein_distance_matrix.csv",
+        default="work/tda/wasserstein_distance_matrix.csv",
         help="Path of the output CSV file.",
     )
     return parser
@@ -39,6 +40,7 @@ def build_parser() -> argparse.ArgumentParser:
 def main() -> None:
     args = build_parser().parse_args()
     distance_matrix_df = run_compute_wasserstein_distance(
+        filtration=args.filtration,
         date_min=args.date_min,
         date_max=args.date_max,
         order=args.order,

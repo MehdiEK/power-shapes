@@ -103,6 +103,7 @@ def wasserstein_distance_matrix(
 
 
 def run_compute_wasserstein_distance( 
+        filtration:str,
         date_min:str,
         date_max:str,
         order:int, 
@@ -135,7 +136,7 @@ def run_compute_wasserstein_distance(
 
     for date, day_ts in scaled_df.groupby(scaled_df['datetime'].dt.date):
         net_load = day_ts['net_demand_solar_mw'].values
-        diagram = persistence_diagram(net_load, filtration="sublevel", clip=True)
+        diagram = persistence_diagram(net_load, filtration=filtration, clip=True)
         diagrams[date] = diagram
 
     # compute the distance matrix

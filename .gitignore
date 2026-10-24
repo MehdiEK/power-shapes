@@ -1,6 +1,7 @@
 # Data directory
 data/*
 !data/.gitkeep
+work/*
 
 # Python virtual environment
 .venv/

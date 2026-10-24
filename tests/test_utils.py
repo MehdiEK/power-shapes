@@ -2,7 +2,7 @@ import pandas as pd
 import pandas.testing as pdt
 import pytest
 
-from power_shapes.utils import scale_columns_by_daily_mean
+from power_shapes.common.utils import scale_columns_by_daily_mean
 
 
 def test_scale_columns_by_daily_mean_groups_by_calendar_date():

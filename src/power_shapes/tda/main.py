@@ -1,6 +1,6 @@
 import argparse
 
-from power_shapes.functions import run_compute_wasserstein_distance
+from power_shapes.tda.functions import run_compute_wasserstein_distance
 
 
 def build_parser() -> argparse.ArgumentParser:

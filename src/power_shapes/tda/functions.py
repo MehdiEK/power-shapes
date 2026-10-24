@@ -6,8 +6,8 @@ from itertools import combinations
 from joblib import Parallel, delayed
 from gudhi.hera import wasserstein_distance as _wd_hera 
 
-from power_shapes.loader import load_rte_data
-from power_shapes.utils import scale_columns_by_daily_mean
+from power_shapes.common.loader import load_rte_data
+from power_shapes.common.utils import scale_columns_by_daily_mean
 
 
 def persistence_diagram(

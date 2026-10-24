@@ -1,7 +1,7 @@
 import pandas as pd
 import pandas.testing as pdt
 
-from power_shapes.loader import load_rte_data
+from power_shapes.common.loader import load_rte_data
 
 
 def test_loaded_data():

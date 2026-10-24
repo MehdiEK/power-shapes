@@ -1,5 +1,5 @@
 import numpy as np
-from power_shapes.functions import persistence_diagram
+from power_shapes.tda.functions import persistence_diagram
 
 
 def to_h0_array(dgm, inf_policy="clip", clip_value=None):
